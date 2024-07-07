@@ -47,7 +47,6 @@ const Chat = ({ token, onLogout }) => {
     fetchSenderId();
   }, [token]);
 
-  useEffect(() => {
     const fetchMessages = async () => {
       if (receiverId) {
         try {
@@ -61,8 +60,6 @@ const Chat = ({ token, onLogout }) => {
       }
     };
 
-    fetchMessages();
-  }, [receiverId, token]);
 
   const handleSendMessage = () => {
     if (receiverId && content) {
@@ -73,6 +70,7 @@ const Chat = ({ token, onLogout }) => {
 
   const handleJoinRoom = (id) => {
     setReceiverId(id);
+    fetchMessages();
     socket.emit('joinRoom', { token, receiverId: id });
   };
 
