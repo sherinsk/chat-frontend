@@ -63,7 +63,7 @@ const Chat = ({ token, onLogout }) => {
     const fetchMessages = async () => {
       if (receiverId && senderId) {
         try {
-          const response = await axios.get(`https://chat-backend-9pci.onrender.com/${senderId}/${receiverId}`, {
+          const response = await axios.get(`https://chat-backend-9pci.onrender.com/messages/${senderId}/${receiverId}`, {
             headers: { Authorization: token },
           });
           setMessages(response.data);
