@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
+import jwtDecode from 'jwt-decode'; 
 import axios from 'axios';
 
 
@@ -38,7 +39,7 @@ const Chat = ({ token, onLogout }) => {
   useEffect(() => {
     const fetchSenderId = async () => {
       try {
-        const decodedToken = jwt.decode(token);
+        const decodedToken = jwtDecode(token);
         setSenderId(decodedToken.userId);
         console.log(senderId)
       } catch (error) {
@@ -69,6 +70,7 @@ const Chat = ({ token, onLogout }) => {
   const handleSendMessage = () => {
     if (receiverId && content) {
       socket.emit('message', { token, receiverId, content });
+      console.log(senderId)
       setContent('');
     }
   };
