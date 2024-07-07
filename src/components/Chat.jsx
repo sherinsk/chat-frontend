@@ -41,7 +41,6 @@ const Chat = ({ token, onLogout }) => {
       try {
         const decodedToken = jwtDecode(token);
         setSenderId(decodedToken.userId);
-        console.log(senderId)
       } catch (error) {
         console.error('Failed to decode token:', error);
       }
