@@ -38,6 +38,7 @@ const Chat = ({ token, onLogout }) => {
         const decodedToken = parseJwt(token);
         console.log('Decoded Token:', decodedToken);
         setSenderId(decodedToken.userId);
+        setReceiverId(decodedToken.userId)
       } catch (error) {
         console.error('Failed to decode token:', error);
       }
