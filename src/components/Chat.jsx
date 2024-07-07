@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 
-
 const socket = io('https://chat-backend-9pci.onrender.com'); // Backend URL
 
 const Chat = ({ token, onLogout }) => {
@@ -34,7 +33,18 @@ const Chat = ({ token, onLogout }) => {
       }
     };
 
+    const fetchSenderId = () => {
+      try {
+        const decodedToken = parseJwt(token);
+        console.log('Decoded Token:', decodedToken);
+        setSenderId(decodedToken.userId);
+      } catch (error) {
+        console.error('Failed to decode token:', error);
+      }
+    };
+
     fetchUsers();
+    fetchSenderId();
 
     socket.on('message', (message) => {
       setMessages((prevMessages) => [...prevMessages, message]);
@@ -46,22 +56,12 @@ const Chat = ({ token, onLogout }) => {
   }, [token]);
 
   useEffect(() => {
-    const fetchSenderId = async () => {
-      try {
-        const decodedToken = parseJwt(token);
-        setSenderId(decodedToken.userId);
-        console.log(senderId)
-      } catch (error) {
-        console.error('Failed to decode token:', error);
-      }
-    };
-
-    fetchSenderId();
-  }, [token]);
+    console.log('Updated senderId:', senderId);
+  }, [senderId]);
 
   useEffect(() => {
     const fetchMessages = async () => {
-      if (receiverId) {
+      if (receiverId && senderId) {
         try {
           const response = await axios.get(`https://chat-backend-9pci.onrender.com/${senderId}/${receiverId}`, {
             headers: { Authorization: token },
@@ -74,7 +74,7 @@ const Chat = ({ token, onLogout }) => {
     };
 
     fetchMessages();
-  }, [receiverId, token]);
+  }, [receiverId, senderId, token]);
 
   const handleSendMessage = () => {
     if (receiverId && content) {
@@ -85,6 +85,7 @@ const Chat = ({ token, onLogout }) => {
 
   const handleJoinRoom = (id) => {
     setReceiverId(id);
+    console.log('Joined Room with receiverId:', id);
     socket.emit('joinRoom', { token, receiverId: id });
   };
 
