@@ -10,7 +10,7 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/login', { email, password });
+      const response = await axios.post('https://chat-backend-9pci.onrender.com/login', { email, password });
       onLogin(response.data.token);
       navigate('/chat');
     } catch (error) {

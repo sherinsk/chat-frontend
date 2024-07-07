@@ -11,7 +11,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/register', { email, password, username });
+      await axios.post('https://chat-backend-9pci.onrender.com/register', { email, password, username });
       navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error);

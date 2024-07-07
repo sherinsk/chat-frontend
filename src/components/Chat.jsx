@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 
-const socket = io('http://localhost:3000'); // Backend URL
+const socket = io('https://chat-backend-9pci.onrender.com'); // Backend URL
 
 const Chat = ({ token, onLogout }) => {
   const [messages, setMessages] = useState([]);
@@ -14,7 +14,7 @@ const Chat = ({ token, onLogout }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/users', {
+        const response = await axios.get('https://chat-backend-9pci.onrender.com/users', {
           headers: { Authorization: token },
         });
         setUsers(response.data);
@@ -51,7 +51,7 @@ const Chat = ({ token, onLogout }) => {
     const fetchMessages = async () => {
       if (receiverId) {
         try {
-          const response = await axios.get(`http://localhost:3000/messages/${senderId}/${receiverId}`, {
+          const response = await axios.get(`https://chat-backend-9pci.onrender.com/${senderId}/${receiverId}`, {
             headers: { Authorization: token },
           });
           setMessages(response.data);
