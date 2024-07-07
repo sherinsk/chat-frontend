@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-import jwtDecode from 'jwt-decode'; 
+import jwtDecode from 'jwt-decode';
 import axios from 'axios';
-
 
 const socket = io('https://chat-backend-9pci.onrender.com'); // Backend URL
 
@@ -17,7 +16,7 @@ const Chat = ({ token, onLogout }) => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('https://chat-backend-9pci.onrender.com/users', {
-          headers: { Authorization: token },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(response.data);
       } catch (error) {
@@ -37,10 +36,10 @@ const Chat = ({ token, onLogout }) => {
   }, [token]);
 
   useEffect(() => {
-    const fetchSenderId = async () => {
+    const fetchSenderId = () => {
       try {
         const decodedToken = jwtDecode(token);
-        setSenderId(decodedToken.userId);
+        setSenderId(decodedToken.userId); // Adjust this based on your token structure
       } catch (error) {
         console.error('Failed to decode token:', error);
       }
@@ -51,10 +50,10 @@ const Chat = ({ token, onLogout }) => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      if (receiverId) {
+      if (receiverId && senderId) {
         try {
-          const response = await axios.get(`https://chat-backend-9pci.onrender.com/${senderId}/${receiverId}`, {
-            headers: { Authorization: token },
+          const response = await axios.get(`https://chat-backend-9pci.onrender.com/messages/${senderId}/${receiverId}`, {
+            headers: { Authorization: `Bearer ${token}` },
           });
           setMessages(response.data);
         } catch (error) {
@@ -64,12 +63,11 @@ const Chat = ({ token, onLogout }) => {
     };
 
     fetchMessages();
-  }, [receiverId, token]);
+  }, [receiverId, senderId, token]);
 
   const handleSendMessage = () => {
     if (receiverId && content) {
       socket.emit('message', { token, receiverId, content });
-      console.log(senderId)
       setContent('');
     }
   };
