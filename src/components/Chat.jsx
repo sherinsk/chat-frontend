@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-import jwtDecode from 'jwt-decode';
 import axios from 'axios';
+
 
 const socket = io('https://chat-backend-9pci.onrender.com'); // Backend URL
 
@@ -12,11 +12,21 @@ const Chat = ({ token, onLogout }) => {
   const [senderId, setSenderId] = useState(null);
   const [users, setUsers] = useState([]);
 
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  }
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('https://chat-backend-9pci.onrender.com/users', {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: token },
         });
         setUsers(response.data);
       } catch (error) {
@@ -36,10 +46,11 @@ const Chat = ({ token, onLogout }) => {
   }, [token]);
 
   useEffect(() => {
-    const fetchSenderId = () => {
+    const fetchSenderId = async () => {
       try {
-        const decodedToken = jwtDecode(token);
-        setSenderId(decodedToken.userId); // Adjust this based on your token structure
+        const decodedToken = parseJwt(token);
+        setSenderId(decodedToken.userId);
+        console.log(senderId)
       } catch (error) {
         console.error('Failed to decode token:', error);
       }
@@ -50,10 +61,10 @@ const Chat = ({ token, onLogout }) => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      if (receiverId && senderId) {
+      if (receiverId) {
         try {
-          const response = await axios.get(`https://chat-backend-9pci.onrender.com/messages/${senderId}/${receiverId}`, {
-            headers: { Authorization: `Bearer ${token}` },
+          const response = await axios.get(`https://chat-backend-9pci.onrender.com/${senderId}/${receiverId}`, {
+            headers: { Authorization: token },
           });
           setMessages(response.data);
         } catch (error) {
@@ -63,7 +74,7 @@ const Chat = ({ token, onLogout }) => {
     };
 
     fetchMessages();
-  }, [receiverId, senderId, token]);
+  }, [receiverId, token]);
 
   const handleSendMessage = () => {
     if (receiverId && content) {
