@@ -10,6 +10,7 @@ const Chat = ({ token, onLogout }) => {
   const [receiverId, setReceiverId] = useState(null);
   const [senderId, setSenderId] = useState(null);
   const [users, setUsers] = useState([]);
+  const [userMap, setUserMap] = useState({});
 
   function parseJwt(token) {
     const base64Url = token.split('.')[1];
@@ -28,6 +29,11 @@ const Chat = ({ token, onLogout }) => {
           headers: { Authorization: token },
         });
         setUsers(response.data);
+        const userMapping = response.data.reduce((acc, user) => {
+          acc[user.id] = user.username;
+          return acc;
+        }, {});
+        setUserMap(userMapping);
       } catch (error) {
         console.error('Failed to fetch users:', error);
       }
@@ -38,7 +44,6 @@ const Chat = ({ token, onLogout }) => {
         const decodedToken = parseJwt(token);
         console.log('Decoded Token:', decodedToken);
         setSenderId(decodedToken.userId);
-        setReceiverId(decodedToken.userId)
       } catch (error) {
         console.error('Failed to decode token:', error);
       }
@@ -117,8 +122,8 @@ const Chat = ({ token, onLogout }) => {
         <main className="flex-1 flex flex-col bg-gray-100">
           <div className="flex-1 p-4 overflow-y-auto">
             {messages.map((msg) => (
-              <div key={msg.id} className={`mb-2 p-2 rounded ${msg.senderId === receiverId ? 'bg-gray-300' : 'bg-blue-300'}`}>
-                <strong>{msg.senderId}:</strong> {msg.content}
+              <div key={msg.id} className={`mb-2 p-2 rounded ${msg.senderId === senderId ? 'bg-blue-300' : 'bg-gray-300'}`}>
+                <strong>{msg.senderId === senderId ? 'You' : userMap[msg.senderId]}:</strong> {msg.content}
               </div>
             ))}
           </div>
