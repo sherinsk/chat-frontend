@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
-import jwt from 'jsonwebtoken'; // Make sure to import jwt
 
 const socket = io('https://chat-backend-9pci.onrender.com'); // Backend URL
 
@@ -12,7 +11,6 @@ const Chat = ({ token, onLogout }) => {
   const [senderId, setSenderId] = useState(null);
   const [users, setUsers] = useState([]);
 
-  // Fetch users and initialize socket connection
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -28,32 +26,32 @@ const Chat = ({ token, onLogout }) => {
     fetchUsers();
 
     socket.on('message', (message) => {
-      if (receiverId === message.senderId || receiverId === message.receiverId) {
-        setMessages((prevMessages) => [...prevMessages, message]);
-      }
+      setMessages((prevMessages) => [...prevMessages, message]);
     });
 
     return () => {
       socket.off('message');
     };
-  }, [token, receiverId]);
-
-  // Fetch senderId from the token
-  useEffect(() => {
-    try {
-      const decodedToken = jwt.decode(token);
-      setSenderId(decodedToken.userId);
-    } catch (error) {
-      console.error('Failed to decode token:', error);
-    }
   }, [token]);
 
-  // Fetch messages when receiverId changes
+  useEffect(() => {
+    const fetchSenderId = async () => {
+      try {
+        const decodedToken = jwt.decode(token);
+        setSenderId(decodedToken.userId);
+      } catch (error) {
+        console.error('Failed to decode token:', error);
+      }
+    };
+
+    fetchSenderId();
+  }, [token]);
+
   useEffect(() => {
     const fetchMessages = async () => {
       if (receiverId) {
         try {
-          const response = await axios.get(`https://chat-backend-9pci.onrender.com/messages/${senderId}/${receiverId}`, {
+          const response = await axios.get(`https://chat-backend-9pci.onrender.com/${senderId}/${receiverId}`, {
             headers: { Authorization: token },
           });
           setMessages(response.data);
@@ -64,9 +62,8 @@ const Chat = ({ token, onLogout }) => {
     };
 
     fetchMessages();
-  }, [receiverId, senderId, token]);
+  }, [receiverId, token]);
 
-  // Send message through socket
   const handleSendMessage = () => {
     if (receiverId && content) {
       socket.emit('message', { token, receiverId, content });
@@ -74,7 +71,6 @@ const Chat = ({ token, onLogout }) => {
     }
   };
 
-  // Join a room and fetch messages
   const handleJoinRoom = (id) => {
     setReceiverId(id);
     socket.emit('joinRoom', { token, receiverId: id });
@@ -107,7 +103,7 @@ const Chat = ({ token, onLogout }) => {
         <main className="flex-1 flex flex-col bg-gray-100">
           <div className="flex-1 p-4 overflow-y-auto">
             {messages.map((msg) => (
-              <div key={msg.id} className={`mb-2 p-2 rounded ${msg.senderId === senderId ? 'bg-gray-300' : 'bg-blue-300'}`}>
+              <div key={msg.id} className={`mb-2 p-2 rounded ${msg.senderId === receiverId ? 'bg-gray-300' : 'bg-blue-300'}`}>
                 <strong>{msg.senderId}:</strong> {msg.content}
               </div>
             ))}
