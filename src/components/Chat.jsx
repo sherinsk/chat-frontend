@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
 
 const socket = io('https://chat-backend-9pci.onrender.com'); // Backend URL
 
