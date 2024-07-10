@@ -30,7 +30,7 @@ const Chat = ({ token, onLogout }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://chat-backend-9pci.onrender.com//users', {
+        const response = await axios.get('https://chat-backend-9pci.onrender.com/users', {
           headers: { Authorization: token },
         });
         setUsers(response.data);
