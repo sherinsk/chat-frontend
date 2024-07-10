@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import Popup from './popup'; // Import the Popup component
 
-const socket = io('https://chat-backend-9pci.onrender.com'); // Backend URL
+const socket = io('http://localhost:3000'); // Backend URL
 
 const Chat = ({ token, onLogout }) => {
   const [messages, setMessages] = useState([]);
@@ -30,7 +30,7 @@ const Chat = ({ token, onLogout }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://chat-backend-9pci.onrender.com/users', {
+        const response = await axios.get('http://localhost:3000/users', {
           headers: { Authorization: token },
         });
         setUsers(response.data);
@@ -78,7 +78,7 @@ const Chat = ({ token, onLogout }) => {
     const fetchMessages = async () => {
       if (receiverId && senderId) {
         try {
-          const response = await axios.get(`https://chat-backend-9pci.onrender.com/messages/${senderId}/${receiverId}`, {
+          const response = await axios.get(`http://localhost:3000/messages/${senderId}/${receiverId}`, {
             headers: { Authorization: token },
           });
           setMessages(response.data);
@@ -109,7 +109,7 @@ const Chat = ({ token, onLogout }) => {
 
   const handleMarkNotificationsSeen = async () => {
     try {
-      await axios.post('https://chat-backend-9pci.onrender.com/notifications/mark-seen', {
+      await axios.post('http://localhost:3000/notifications/mark-seen', {
         notificationIds: notifications.map((n) => n.id),
       }, {
         headers: { Authorization: token },
