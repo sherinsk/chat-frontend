@@ -13,6 +13,8 @@ const Login = ({ onLogin }) => {
     try {
       const response = await axios.post('https://chat-backend-y7li.onrender.com/login', { email, password });
       onLogin(response.data.token);
+      console.log(response)
+      localStorage.setItem("userId",response?.data?.userId)
       navigate('/chat');
     } catch (error) {
       console.error('Login failed:', error);

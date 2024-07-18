@@ -16,6 +16,7 @@ const Chat = ({ token, onLogout }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
+  const userId = localStorage.getItem('userId')
 
   function parseJwt(token) {
     const base64Url = token.split('.')[1];
@@ -167,7 +168,8 @@ const Chat = ({ token, onLogout }) => {
                     receiverId === user.id ? 'bg-blue-100' : 'hover:bg-gray-200'
                   }`}
                 >
-                  {user.username}
+                  {console.log( typeof userId)}
+                  {user.id === parseInt(userId) ? "You" : user?.username}
                 </button>
               </li>
             ))}
