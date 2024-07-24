@@ -11,7 +11,7 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://chat-backend-y7li.onrender.com/login', { email, password });
+      const response = await axios.post('https://chat-backend-on34.onrender.com/login', { email, password });
       onLogin(response.data.token);
       console.log(response)
       localStorage.setItem("userId",response?.data?.userId)

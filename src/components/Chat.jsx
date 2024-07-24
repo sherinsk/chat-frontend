@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import Popup from './popup'; // Import the Popup component
 
-const socket = io('https://chat-backend-y7li.onrender.com'); // Backend URL
+const socket = io('https://chat-backend-on34.onrender.com'); // Backend URL
 
 const Chat = ({ token, onLogout }) => {
   const [messages, setMessages] = useState([]);
@@ -31,7 +31,7 @@ const Chat = ({ token, onLogout }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://chat-backend-y7li.onrender.com/users', {
+        const response = await axios.get('https://chat-backend-on34.onrender.com/users', {
           headers: { Authorization: token },
         });
         setUsers(response.data);
@@ -79,7 +79,7 @@ const Chat = ({ token, onLogout }) => {
     const fetchMessages = async () => {
       if (receiverId && senderId) {
         try {
-          const response = await axios.get(`https://chat-backend-y7li.onrender.com/messages/${senderId}/${receiverId}`, {
+          const response = await axios.get(`https://chat-backend-on34.onrender.com/messages/${senderId}/${receiverId}`, {
             headers: { Authorization: token },
           });
           setMessages(response.data);
@@ -110,7 +110,7 @@ const Chat = ({ token, onLogout }) => {
 
   const handleMarkNotificationsSeen = async () => {
     try {
-      await axios.post('https://chat-backend-y7li.onrender.com/notifications/mark-seen', {
+      await axios.post('https://chat-backend-on34.onrender.com/notifications/mark-seen', {
         notificationIds: notifications.map((n) => n.id),
       }, {
         headers: { Authorization: token },

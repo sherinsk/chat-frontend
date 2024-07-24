@@ -12,7 +12,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('https://chat-backend-y7li.onrender.com/register', { email, password, username });
+      await axios.post('https://chat-backend-on34.onrender.com/register', { email, password, username });
       navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error);
