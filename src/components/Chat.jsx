@@ -32,7 +32,7 @@ const Chat = ({ token, onLogout }) => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('https://chat-backend-on34.onrender.com/users', {
-          headers: { Authorization: token },
+          headers: { authorization: token },
         });
         setUsers(response.data);
         const userMapping = response.data.reduce((acc, user) => {
